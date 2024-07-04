@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ffi';
 import 'package:meal/models/meal.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,12 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   final List<Meal> _favMeals = [];
+  Map<Filter, bool> _selectedFilters = {
+    Filter.isGlutenFree: false,
+    Filter.isLactoseFree: false,
+    Filter.isVegan: false,
+    Filter.isVegetarian: false,
+  };
   void _toggleMealFavStatus(Meal meal) {
     bool isFav = _favMeals.contains(meal);
     if (isFav) {
@@ -31,12 +38,15 @@ class _TabsScreenState extends State<TabsScreen> {
   }
 
   void _setScreen(String identifier) {
-    if (identifier == 'meals') {
-      Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (ctx) => FiltersScreen()));
+    Navigator.of(context).pop();
+    if (identifier == 'filters') {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => const FiltersScreen()))
+          .then((value) {
+        setState(() {
+          _selectedFilters = value;
+        });
+      });
     }
   }
 
