@@ -6,8 +6,10 @@ import 'package:meal/screens/meals_screen.dart';
 import '../models/category.dart';
 
 class CategoryGridItem extends StatelessWidget {
-  const CategoryGridItem({super.key, required this.category});
+  const CategoryGridItem(
+      {super.key, required this.category, required this.onToggelFav});
   final Category category;
+  final Function(Meal meal) onToggelFav;
   @override
   Widget build(BuildContext context) {
     final List<Meal> felteerdData = dummyMeals
@@ -19,8 +21,11 @@ class CategoryGridItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) =>
-                MealsScreen(title: category.title, meals: felteerdData),
+            builder: (ctx) => MealsScreen(
+              title: category.title,
+              meals: felteerdData,
+              onToggelFav: onToggelFav,
+            ),
           ),
         );
       },
