@@ -4,8 +4,10 @@ import '/data/dummy_data.dart';
 import '/widgets/category_grid_item.dart';
 
 class CategoriosScreen extends StatelessWidget {
-  const CategoriosScreen({super.key, required this.onToggelFav});
+  const CategoriosScreen(
+      {super.key, required this.onToggelFav, required this.avilableMeals});
   final Function(Meal meal) onToggelFav;
+  final List<Meal> avilableMeals;
   @override
   Widget build(BuildContext context) {
     return GridView(
@@ -20,6 +22,7 @@ class CategoriosScreen extends StatelessWidget {
             CategoryGridItem(
               category: ele,
               onToggelFav: onToggelFav,
+              avilableMeals: avilableMeals,
             ),
         ]);
   }

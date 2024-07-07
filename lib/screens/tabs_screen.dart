@@ -1,5 +1,5 @@
-import 'dart:developer';
 import 'dart:ffi';
+import 'package:meal/data/dummy_data.dart';
 import 'package:meal/models/meal.dart';
 import 'package:flutter/material.dart';
 import 'package:meal/screens/categorios_screen.dart';
@@ -15,13 +15,14 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  final List<Meal> _favMeals = [];
-  Map<Filter, bool> _selectedFilters = {
+  static const kInitialFilters = {
     Filter.isGlutenFree: false,
     Filter.isLactoseFree: false,
     Filter.isVegan: false,
     Filter.isVegetarian: false,
   };
+  final List<Meal> _favMeals = [];
+  Map<Filter, bool> _selectedFilters = kInitialFilters;
   void _toggleMealFavStatus(Meal meal) {
     bool isFav = _favMeals.contains(meal);
     if (isFav) {
@@ -41,10 +42,13 @@ class _TabsScreenState extends State<TabsScreen> {
     Navigator.of(context).pop();
     if (identifier == 'filters') {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => const FiltersScreen()))
+          .push(MaterialPageRoute(
+              builder: (ctx) => FiltersScreen(
+                    currrentFilters: _selectedFilters,
+                  )))
           .then((value) {
         setState(() {
-          _selectedFilters = value;
+          _selectedFilters = value ?? kInitialFilters;
         });
       });
     }
@@ -64,9 +68,25 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Meal> avilableMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.isGlutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.isLactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.isVegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilters[Filter.isVegan]! && !meal.isVegan) {
+        return false;
+      }
+      return true;
+    }).toList();
     var activeScreenTitle = 'Pick your category';
     Widget activeScreen = CategoriosScreen(
       onToggelFav: _toggleMealFavStatus,
+      avilableMeals: avilableMeals,
     );
     if (_selectedScreenIndex == 1) {
       activeScreenTitle = 'Favorits';
