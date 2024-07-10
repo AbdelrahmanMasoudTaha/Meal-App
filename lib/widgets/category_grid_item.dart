@@ -7,12 +7,9 @@ import '../models/category.dart';
 
 class CategoryGridItem extends StatelessWidget {
   const CategoryGridItem(
-      {super.key,
-      required this.category,
-      required this.onToggelFav,
-      required this.avilableMeals});
+      {super.key, required this.category, required this.avilableMeals});
   final Category category;
-  final Function(Meal meal) onToggelFav;
+
   final List<Meal> avilableMeals;
   @override
   Widget build(BuildContext context) {
@@ -28,7 +25,6 @@ class CategoryGridItem extends StatelessWidget {
             builder: (ctx) => MealsScreen(
               title: category.title,
               meals: felteerdData,
-              onToggelFav: onToggelFav,
             ),
           ),
         );

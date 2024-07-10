@@ -1,29 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal/models/meal.dart';
+import 'package:meal/providers/favorite_meals_provider.dart';
 
-class MealDetailsScreen extends StatelessWidget {
-  const MealDetailsScreen(
-      {super.key, required this.meal, required this.onToggelFav});
+class MealDetailsScreen extends ConsumerStatefulWidget {
+  const MealDetailsScreen({
+    super.key,
+    required this.meal,
+  });
   final Meal meal;
-  final Function(Meal meal) onToggelFav;
+
+  @override
+  ConsumerState<MealDetailsScreen> createState() => _MealDetailsScreenState();
+}
+
+class _MealDetailsScreenState extends ConsumerState<MealDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    final List<Meal> favMeals = ref.watch(favoriteMealsProvider);
+    bool isadded = favMeals.contains(widget.meal);
     return Scaffold(
       appBar: AppBar(
-        title: Text(meal.title),
+        title: Text(widget.meal.title),
         actions: [
           IconButton(
               onPressed: () {
-                onToggelFav(meal);
+                isadded = ref
+                    .read(favoriteMealsProvider.notifier)
+                    .toggleMealFavStatus(widget.meal);
+                setState(() {});
               },
-              icon: const Icon(Icons.star))
+              icon: Icon(isadded ? Icons.star : Icons.star_border))
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Image.network(
-              meal.imageUrl,
+              widget.meal.imageUrl,
               fit: BoxFit.cover,
               height: 300,
               width: double.infinity,
@@ -37,7 +51,7 @@ class MealDetailsScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
             ),
-            for (final ing in meal.ingredients)
+            for (final ing in widget.meal.ingredients)
               Text(
                 ing,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -53,7 +67,7 @@ class MealDetailsScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
             ),
-            for (final step in meal.steps)
+            for (final step in widget.meal.steps)
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
