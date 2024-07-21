@@ -1,108 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal/providers/filter_provider.dart';
 
-class FiltersScreen extends StatefulWidget {
-  const FiltersScreen({super.key, required this.currrentFilters});
-
-  @override
-  State<FiltersScreen> createState() => _FiltersScreenState();
-  final Map<Filter, bool> currrentFilters;
-}
-
-enum Filter {
-  isGlutenFree,
-  isLactoseFree,
-  isVegan,
-  isVegetarian,
-}
-
-class _FiltersScreenState extends State<FiltersScreen> {
-  bool _isGlutenFree = false;
-  bool _isLactoseFree = false;
-  bool _isVegan = false;
-  bool _isVegetarian = false;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _isGlutenFree = widget.currrentFilters[Filter.isGlutenFree]!;
-    _isLactoseFree = widget.currrentFilters[Filter.isLactoseFree]!;
-    _isVegetarian = widget.currrentFilters[Filter.isVegetarian]!;
-    _isVegan = widget.currrentFilters[Filter.isVegan]!;
-  }
+class FiltersScreen extends ConsumerWidget {
+  const FiltersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeFilters = ref.watch(filtersProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
       ),
-      // drawer: MainDrawer(
-      //   onSelectScreen: (identfier) {
-      //     N
-      //     if (identfier == 'meals') {
-      //       Navigator.of(context).pushReplacement(
-      //           MaterialPageRoute(builder: (ctx) => const TabsScreen()));
-      //     }
-      //   },
-      // ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop({
-            Filter.isGlutenFree: _isGlutenFree,
-            Filter.isLactoseFree: _isLactoseFree,
-            Filter.isVegan: _isVegan,
-            Filter.isVegetarian: _isVegetarian,
-          });
-          return false;
-        },
-        child: Column(
-          children: [
-            custumSwitch(
-              context,
-              "Gluten-Free",
-              "Only include Gluten-Free meals",
-              _isGlutenFree,
-              (bool val) {
-                setState(() {
-                  _isGlutenFree = val;
-                });
-              },
-            ),
-            custumSwitch(
-              context,
-              "Lactose-Free",
-              "Only include Lactose-Free meals",
-              _isLactoseFree,
-              (bool val) {
-                setState(() {
-                  _isLactoseFree = val;
-                });
-              },
-            ),
-            custumSwitch(
-              context,
-              "Vegan",
-              "Only include Vegan meals",
-              _isVegan,
-              (bool val) {
-                setState(() {
-                  _isVegan = val;
-                });
-              },
-            ),
-            custumSwitch(
-              context,
-              "Vegetarian",
-              "Only include Vegetarian meals",
-              _isVegetarian,
-              (bool val) {
-                setState(() {
-                  _isVegetarian = val;
-                });
-              },
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          custumSwitch(
+            context,
+            "Gluten-Free",
+            "Only include Gluten-Free meals",
+            activeFilters[Filter.isGlutenFree],
+            (bool val) {
+              ref
+                  .watch(filtersProvider.notifier)
+                  .setFilter(Filter.isGlutenFree, val);
+            },
+          ),
+          custumSwitch(
+            context,
+            "Lactose-Free",
+            "Only include Lactose-Free meals",
+            activeFilters[Filter.isLactoseFree],
+            (bool val) {
+              ref
+                  .watch(filtersProvider.notifier)
+                  .setFilter(Filter.isLactoseFree, val);
+            },
+          ),
+          custumSwitch(
+            context,
+            "Vegan",
+            "Only include Vegan meals",
+            activeFilters[Filter.isVegan],
+            (bool val) {
+              ref
+                  .watch(filtersProvider.notifier)
+                  .setFilter(Filter.isVegan, val);
+            },
+          ),
+          custumSwitch(
+            context,
+            "Vegetarian",
+            "Only include Vegetarian meals",
+            activeFilters[Filter.isVegetarian],
+            (bool val) {
+              ref
+                  .watch(filtersProvider.notifier)
+                  .setFilter(Filter.isVegetarian, val);
+            },
+          ),
+        ],
       ),
     );
   }

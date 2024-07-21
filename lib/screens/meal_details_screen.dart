@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal/models/meal.dart';
 import 'package:meal/providers/favorite_meals_provider.dart';
 
-class MealDetailsScreen extends ConsumerStatefulWidget {
+class MealDetailsScreen extends ConsumerWidget {
   const MealDetailsScreen({
     super.key,
     required this.meal,
@@ -11,33 +11,29 @@ class MealDetailsScreen extends ConsumerStatefulWidget {
   final Meal meal;
 
   @override
-  ConsumerState<MealDetailsScreen> createState() => _MealDetailsScreenState();
-}
-
-class _MealDetailsScreenState extends ConsumerState<MealDetailsScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final List<Meal> favMeals = ref.watch(favoriteMealsProvider);
-    bool isadded = favMeals.contains(widget.meal);
+    bool isadded = favMeals.contains(meal);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.meal.title),
+        title: Text(meal.title),
         actions: [
           IconButton(
-              onPressed: () {
-                isadded = ref
-                    .read(favoriteMealsProvider.notifier)
-                    .toggleMealFavStatus(widget.meal);
-                setState(() {});
-              },
-              icon: Icon(isadded ? Icons.star : Icons.star_border))
+            onPressed: () {
+              ref
+                  .read(favoriteMealsProvider.notifier)
+                  .toggleMealFavStatus(meal);
+            },
+            icon: Icon(isadded ? Icons.star : Icons.star_border),
+            color: isadded ? Colors.amber : Colors.amber[50],
+          )
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Image.network(
-              widget.meal.imageUrl,
+              meal.imageUrl,
               fit: BoxFit.cover,
               height: 300,
               width: double.infinity,
@@ -51,7 +47,7 @@ class _MealDetailsScreenState extends ConsumerState<MealDetailsScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
             ),
-            for (final ing in widget.meal.ingredients)
+            for (final ing in meal.ingredients)
               Text(
                 ing,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -67,7 +63,7 @@ class _MealDetailsScreenState extends ConsumerState<MealDetailsScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
             ),
-            for (final step in widget.meal.steps)
+            for (final step in meal.steps)
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
