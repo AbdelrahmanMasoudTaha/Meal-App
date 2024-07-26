@@ -24,7 +24,18 @@ class MealDetailsScreen extends ConsumerWidget {
                   .read(favoriteMealsProvider.notifier)
                   .toggleMealFavStatus(meal);
             },
-            icon: Icon(isadded ? Icons.star : Icons.star_border),
+            icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (child, animation) {
+                  return RotationTransition(
+                    turns: Tween<double>(begin: 0.5, end: 1).animate(animation),
+                    child: child,
+                  );
+                },
+                child: Icon(
+                  isadded ? Icons.star : Icons.star_border,
+                  key: ValueKey(isadded),
+                )),
             color: isadded ? Colors.amber : Colors.amber[50],
           )
         ],
@@ -32,11 +43,14 @@ class MealDetailsScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(
-              meal.imageUrl,
-              fit: BoxFit.cover,
-              height: 300,
-              width: double.infinity,
+            Hero(
+              tag: meal.id,
+              child: Image.network(
+                meal.imageUrl,
+                fit: BoxFit.cover,
+                height: 300,
+                width: double.infinity,
+              ),
             ),
             const SizedBox(
               height: 14,
